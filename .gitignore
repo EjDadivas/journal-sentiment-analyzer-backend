@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyz
+*.pyw
+*.pyi
+*.pyproj
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+*.manifest
+*.spec
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.venv.bak/
+.venv.local/
+.vscode/
+
+# IDE
+.idea/
+.vs/
+
+# Logs
+*.log
+logs/
+log/
+*.swp
+
+# Dependency Management
+pip-lock.txt
+pipenv.lock
+poetry.lock
+
+# Testing
+.coverage
+.tox/
+.pytest_cache/
+
+# Build Tools
+node_modules/
+bower_components/
+yarn.lock
+package-lock.json
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
