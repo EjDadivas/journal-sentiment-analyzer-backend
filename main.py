@@ -6,19 +6,32 @@ from fastapi.responses import Response
 from pydantic import ConfigDict, BaseModel, Field, EmailStr
 from pydantic.functional_validators import BeforeValidator
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Optional, Any
 
 from bson import ObjectId
 import motor.motor_asyncio
 from pymongo import ReturnDocument
 
+from dotenv import load_dotenv
+import os
+
+from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
+
+tokenizer = RobertaTokenizerFast.from_pretrained("arpanghoshal/EmoRoBERTa")
+model = TFRobertaForSequenceClassification.from_pretrained("arpanghoshal/EmoRoBERTa")
+
+emotion = pipeline('sentiment-analysis', model=model, tokenizer=tokenizer, return_all_scores=True)
+
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(
     title="Journal Analysis System",
     summary="A Sentiment Analysis API for Journals",
 )
 client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGODB_URL"])
-db = client.college
+db = client.journal_sentimentdb
 journal_collection = db.get_collection("journal_entries")
 
 # Represents an ObjectId field in the database.
@@ -40,8 +53,10 @@ class JournalModel(BaseModel):
     # email: EmailStr = Field(...)
     entry: str = Field(...)
     # gpa: float = Field(..., le=4.0)
+    sentiment_score: Optional[Any] 
     model_config = ConfigDict(
         populate_by_name=True,
+        json_encoders = {ObjectId: str},
         arbitrary_types_allowed=True,
         json_schema_extra={
             "example": {
@@ -93,18 +108,18 @@ class JournalCollection(BaseModel):
     response_model_by_alias=False,
 )
 async def create_journal_entry(journal_entry: JournalModel = Body(...)):
-    """
-    Insert a new student record.
+    emotion_labels = emotion(journal_entry.entry)
+    print(emotion_labels)
 
-    A unique `id` will be created and provided in the response.
-    """
-    new_journal_entry = await journal_collection.insert_one(
-        journal_entry.model_dump(by_alias=True, exclude=["id"])
-    )
+    # Create a new dictionary with all the fields from the journal_entry plus the sentiment_score
+    journal_entry_dict = journal_entry.dict(by_alias=True, exclude={"id"})
+    journal_entry_dict["sentiment_score"] = emotion_labels
+
+    new_journal_entry = await journal_collection.insert_one(journal_entry_dict)
     created_journal_entry = await journal_collection.find_one(
         {"_id": new_journal_entry.inserted_id}
     )
-    return created_journal_entry
+    return journal_entry
 
 
 @app.get(
