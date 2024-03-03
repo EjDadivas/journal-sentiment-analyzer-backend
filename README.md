@@ -32,7 +32,7 @@ Replace `<repository-url> `with the URL of the repository you want to clone.
 Navigate to the project directory and run the following commands to create and activate a virtual environment:
 ```bash
 python -m venv venv
-.\venv\Scripts\activate
+venv\Scripts\activate
 ```
 ## Step 5: Install the Requirements
 Run the following command to install the requirements from requirements.txt:
@@ -43,7 +43,7 @@ pip install -r requirements.txt
 ## Step 6: Run the Server
 Run the following command to start the Uvicorn server:
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 Replace main with the name of your Python file and app with the name of your FastAPI application.
 
