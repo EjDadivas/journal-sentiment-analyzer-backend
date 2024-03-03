@@ -32,7 +32,7 @@ Replace `<repository-url> `with the URL of the repository you want to clone.
 Navigate to the project directory and run the following commands to create and activate a virtual environment:
 ```bash
 python -m venv venv
-venv\Scripts\activate
+venv/Scripts/activate
 ```
 ## Step 5: Install the Requirements
 Run the following command to install the requirements from requirements.txt:
