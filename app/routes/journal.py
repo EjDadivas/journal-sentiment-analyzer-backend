@@ -45,7 +45,7 @@ async def create_journal_entry(journal_entry: JournalModel = Body(...)):
     response_model_by_alias=False,
 )
 async def list_journal_entries():
-    journal_entries = await journal_collection.find({}, {"_id": 0})
+    journal_entries = await journal_collection.find({}, {"_id": 0}).to_list(1000)
     return journal_entries
 
 @router.get(
