@@ -4,6 +4,8 @@ from pymongo import ReturnDocument
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGODB_URL"])
 db = client.journal_sentimentdb
 
