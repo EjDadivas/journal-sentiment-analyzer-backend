@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated
 from bson import ObjectId
-
+from datetime import datetime
 from pydantic.functional_validators import BeforeValidator
 
 
@@ -14,8 +14,9 @@ class JournalModel(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
     title: str = Field(...)
     entry: str = Field(...)
-    student_id: str = Field(...)
+    student_id: Optional[str] = Field(default=None)
     sentiment_scores: Optional[List[SentimentScore]] = []
+
 
     class Config:
         arbitrary_types_allowed = True
@@ -25,9 +26,5 @@ class JournalModel(BaseModel):
                 "title": "My Journal",
                 "entry": "This is my journal entry",
                 "student_id": "student1",
-                "sentiment_scores": [
-                    {"score": 0.5, "label": "neutral"},
-                    {"score": 0.7, "label": "positive"},
-                ],
             }
         }

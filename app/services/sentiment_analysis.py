@@ -9,4 +9,4 @@ emotion = pipeline('sentiment-analysis',
 
 def sentiment_analysis(text: str):
     emotion_labels = emotion(text)    
-    return emotion_labels
+    return emotion_labels[0]
