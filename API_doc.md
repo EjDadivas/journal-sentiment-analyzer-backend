@@ -711,7 +711,7 @@
     "lastName": "Doe",
     "userName": "johndoe",
     "email": "john@school.com",
-    "course_of_study": "Computer Science",
+    "course": "Computer Science",
     "year": 2,
     "password": "password123"
 }
@@ -724,7 +724,7 @@
   "lastName": "Abdulazeez Adeshina",
   "userName": "abdul",
   "email": "abdul@school.com",
-  "course_of_study": "Water resources engineering",
+  "course": "Water resources engineering",
   "year": 3,
   "password": "$2b$12$MG8/Xp30ZINVtMYB.DTGtOq2//x6kiUL6jTnhDK6Q9PaMEjJvsOiW"
 }
@@ -768,7 +768,7 @@
     "lastName": "Doe",
     "userName": "johndoe",
     "email": "john@school.com",
-    "course_of_study": "Computer Science",
+    "course": "Computer Science",
     "year": 2,
     "password": "password123"
 }
@@ -781,7 +781,7 @@
   "lastName": "Doe",
   "userName": "johndoe",
   "email": "john@school.com",
-  "course_of_study": "Computer Science",
+  "course": "Computer Science",
   "year": 2,
   "password": "$2b$12$KbQiHKTdjEvzvkBaJ0KZteG7E0/9aA7iS3YiDkPe/WzdETa5bHZHy"
 }
@@ -799,7 +799,7 @@
   "lastName": "dee",
   "userName": "ejjjjj",
   "email": "ejdee@gmail.com",
-  "course_of_study": "Water resources engineering",
+  "course": "Water resources engineering",
   "year": 4,
   "password": "$2b$12$mZeH91NoQq3JZX13TJnJyeaQQG8XzUcZqYqFj.68OVoO7Iyn4IOUu"
 }

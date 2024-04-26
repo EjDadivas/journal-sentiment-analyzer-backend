@@ -10,7 +10,7 @@ class Student(BaseModel):
     lastName: str
     userName: str
     email: EmailStr
-    course_of_study: str
+    course: str
     year: int
     password: str
 
@@ -27,7 +27,7 @@ class Student(BaseModel):
                 "lastName": "Abdulazeez Adeshina",
                 "userName": "abdul",
                 "email": "abdul@school.com",
-                "course_of_study": "Water resources engineering",
+                "course": "Water resources engineering",
                 "year": 4,
                 "password": "password123",
             }

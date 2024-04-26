@@ -48,6 +48,8 @@ async def create_journal_entry(journal_entry: JournalModel = Body(...)):
 )
 async def list_journal_entries():
     journal_entries = await journal_collection.find().to_list(1000)
+    
+    
     for journal_entry in journal_entries:
         journal_entry["_id"] = str(journal_entry["_id"])
         journal_entry["student_id"] = str(journal_entry["student_id"])
