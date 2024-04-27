@@ -11,6 +11,7 @@ async def register_admin(admin: AdminModel = Body(...)):
     result = await admin_collection.insert_one(admin.dict())
     new_admin = await admin_collection.find_one({"_id": result.inserted_id})
     new_admin["_id"] = str(new_admin["_id"])
+    del new_admin["password"] 
     return new_admin
 
 @router.post("/login", response_description="Login an admin")
@@ -27,8 +28,7 @@ async def login_admin(email: str = Body(...), password: str = Body(...)):
 @router.get("/{id}", response_description="Get a single admin")
 async def get_admin(id: str):
     if (admin := await admin_collection.find_one({"_id": ObjectId(id)})) is not None:
-        admin["_id"] = str(admin["_id"])
-
+        admin["_id"] = str(admin["_id"])      
         return admin
 
     raise HTTPException(status_code=404, detail=f"Admin {id} not found")
