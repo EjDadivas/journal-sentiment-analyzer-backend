@@ -20,12 +20,15 @@ async def login_admin(email: str = Body(...), password: str = Body(...)):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     if not pwd_context.verify(password, admin["password"]):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
-    return {"detail": "Admin successfully logged in", "admin_id": str(admin["_id"])}
+    admin["_id"] = str(admin["_id"])
+    del admin["password"] 
+    return admin
 
 @router.get("/{id}", response_description="Get a single admin")
 async def get_admin(id: str):
     if (admin := await admin_collection.find_one({"_id": ObjectId(id)})) is not None:
         admin["_id"] = str(admin["_id"])
+
         return admin
 
     raise HTTPException(status_code=404, detail=f"Admin {id} not found")
