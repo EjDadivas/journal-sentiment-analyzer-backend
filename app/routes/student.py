@@ -13,6 +13,8 @@ async def register_student(student: Student = Body(...)):
     result = await student_collection.insert_one(student.dict())
     new_student = await student_collection.find_one({"_id": result.inserted_id})
     new_student["_id"] = str(new_student["_id"])
+    del new_student["password"]
+    
     return new_student
 
 @router.get("/", response_description="List all students")
@@ -20,12 +22,15 @@ async def list_students():
     students = await student_collection.find().to_list(1000)
     for student in students:
         student["_id"] = str(student["_id"])
+        del student["password"]
+        
     return students
 
 @router.get("/{id}", response_description="Get a single student")
 async def get_student(id: str):
     if (student := await student_collection.find_one({"_id": ObjectId(id)})) is not None:
         student["_id"] = str(student["_id"])
+        del student["password"]
         return student
 
     raise HTTPException(status_code=404, detail=f"Student {id} not found")
@@ -66,4 +71,6 @@ async def login_student(email: str = Body(...), password: str = Body(...)):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     if not pwd_context.verify(password, student["password"]):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
-    return {"detail": "Student successfully logged in", "student_id": str(student["_id"])}
+    student["_id"] = str(student["_id"])
+    del student["password"]
+    return student
