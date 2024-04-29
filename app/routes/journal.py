@@ -6,7 +6,7 @@ import json
 from bson import ObjectId, json_util
 from pymongo import ReturnDocument
 from app.models.journal import JournalModel
-from app.database import journal_collection
+from app.database import journal_collection, student_collection
 from app.services.sentiment_analysis import sentiment_analysis
 from datetime import datetime
 class JSONEncoder(json.JSONEncoder):
@@ -36,7 +36,14 @@ async def create_journal_entry(journal_entry: JournalModel = Body(...)):
         })
         new_journal_entry = await journal_collection.find_one({"_id": result.inserted_id})
         new_journal_entry["_id"] = str(new_journal_entry["_id"])
-        new_journal_entry["student_id"] = str(new_journal_entry["student_id"])
+        del new_journal_entry["student_id"]
+        
+        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        if student:
+            student["_id"] = str(student["_id"])
+            del student["id"]
+            del student["password"]  # remove the password before adding the student details
+            new_journal_entry["student_details"] = student
     except Exception as e:
         raise HTTPException(status_code=400, detail="An error occurred while creating the journal entry.")
     return new_journal_entry
@@ -52,7 +59,14 @@ async def list_journal_entries():
     
     for journal_entry in journal_entries:
         journal_entry["_id"] = str(journal_entry["_id"])
-        journal_entry["student_id"] = str(journal_entry["student_id"])
+        del journal_entry["student_id"]
+          # Fetch the student details
+        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        if student:
+            student["_id"] = str(student["_id"])
+            del student["password"]  # remove the password before adding the student details
+            journal_entry["student_details"] = student
+
     return journal_entries
 
 @router.get(
@@ -66,7 +80,13 @@ async def show_journal_entry(id: str):
         journal_entry := await journal_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         journal_entry["_id"] = str(journal_entry["_id"])
-        journal_entry["student_id"] = str(journal_entry["student_id"])
+        del journal_entry["student_id"]
+        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        if student:
+            student["_id"] = str(student["_id"])
+            del student["password"]  # remove the password before adding the student details
+            journal_entry["student_details"] = student
+        
         return journal_entry
 
     raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
@@ -78,7 +98,12 @@ async def get_journals_by_student_id(student_id: str):
     journal_entries = await journal_collection.find({"student_id": ObjectId(student_id)}).to_list(1000)
     for journal_entry in journal_entries:
         journal_entry["_id"] = str(journal_entry["_id"])
-        journal_entry["student_id"] = str(journal_entry["student_id"])
+        del journal_entry["student_id"] 
+        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        if student:
+            student["_id"] = str(student["_id"])
+            del student["password"]  # remove the password before adding the student details
+            journal_entry["student_details"] = student
     return journal_entries
 
 
