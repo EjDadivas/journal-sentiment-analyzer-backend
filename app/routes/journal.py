@@ -23,7 +23,7 @@ router = APIRouter()
 )
 async def create_journal_entry(journal_entry: JournalModel = Body(...)):
     sentiment_score = sentiment_analysis(journal_entry.entry)
-    print(sentiment_score)
+    # print(sentiment_score)
     try:
         result = await journal_collection.insert_one({
             "title": journal_entry.title,
@@ -34,19 +34,20 @@ async def create_journal_entry(journal_entry: JournalModel = Body(...)):
             "updated_at": datetime.utcnow()
             
         })
-        new_journal_entry = await journal_collection.find_one({"_id": result.inserted_id})
+        new_journal_entry = await journal_collection.find_one({"_id": ObjectId(result.inserted_id)})
         new_journal_entry["_id"] = str(new_journal_entry["_id"])
+        
        
         
-        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        student = await student_collection.find_one({"_id": new_journal_entry["student_id"]})
         if student:
             student["_id"] = str(student["_id"])
-            del student["id"]
-            del student["password"]  # remove the password before adding the student details
+            del student["password"]
             new_journal_entry["student_details"] = student
-        del new_journal_entry["student_id"]
+            del new_journal_entry["student_id"]
     except Exception as e:
         raise HTTPException(status_code=400, detail="An error occurred while creating the journal entry.")
+    # return {"status: ", "success"}
     return new_journal_entry
 
 @router.get(
