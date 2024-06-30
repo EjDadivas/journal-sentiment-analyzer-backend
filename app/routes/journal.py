@@ -9,6 +9,8 @@ from app.models.journal import JournalModel
 from app.database import journal_collection, student_collection
 from app.services.sentiment_analysis import sentiment_analysis
 from datetime import datetime
+from collections import defaultdict
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):   
         return json_util.default(o)
@@ -71,27 +73,27 @@ async def list_journal_entries():
         del journal_entry["student_id"]
     return journal_entries
 
-@router.get(
-    "/{id}",
-    response_description="Get a single journal entry",
-    # response_model=JournalModel,
-    response_model_by_alias=False,
-)
-async def show_journal_entry(id: str):
-    if (
-        journal_entry := await journal_collection.find_one({"_id": ObjectId(id)})
-    ) is not None:
-        journal_entry["_id"] = str(journal_entry["_id"])
-        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
-        if student:
-            student["_id"] = str(student["_id"])
-            del student["password"]  # remove the password before adding the student details
-            journal_entry["student_details"] = student
-        del journal_entry["student_id"]
+# @router.get(
+#     "/{id}",
+#     response_description="Get a single journal entry",
+#     # response_model=JournalModel,
+#     response_model_by_alias=False,
+# )
+# async def show_journal_entry(id: str):
+#     if (
+#         journal_entry := await journal_collection.find_one({"_id": ObjectId(id)})
+#     ) is not None:
+#         journal_entry["_id"] = str(journal_entry["_id"])
+#         student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+#         if student:
+#             student["_id"] = str(student["_id"])
+#             del student["password"]  # remove the password before adding the student details
+#             journal_entry["student_details"] = student
+#         del journal_entry["student_id"]
         
-        return journal_entry
+#         return journal_entry
 
-    raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
+#     raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
 
 
 
@@ -148,3 +150,22 @@ async def delete_journal(id: str):
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
+
+@router.get("/emotions", response_description="Get students with positive emotions")
+async def get_students_with_positive_emotions():
+    journal_entries = await journal_collection.find().to_list(1000)
+    students_grouped_by_emotion = defaultdict(list)
+
+    for journal_entry in journal_entries:
+        for emotion in journal_entry["sentiment_score"]:
+            emotion_score = round(emotion["score"], 2)
+            if emotion_score > 0:
+                student_id = journal_entry["student_id"]
+                student = await student_collection.find_one({"_id": ObjectId(student_id)})
+                if student:
+                    student["_id"] = str(student["_id"])
+                    del student["password"]
+                    student["emotion_score"] = emotion_score
+                    students_grouped_by_emotion[emotion["label"]].append(student)
+
+    return dict(students_grouped_by_emotion)

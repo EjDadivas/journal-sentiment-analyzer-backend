@@ -14,4 +14,5 @@ db = client.journal_sentimentdb
 journal_collection = db.get_collection("journal_entries")
 student_collection = db.get_collection("students")
 admin_collection = db.get_collection("admins")
+message_collection = db.get_collection("message_history")
 
