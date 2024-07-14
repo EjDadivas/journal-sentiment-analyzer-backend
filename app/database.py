@@ -1,5 +1,5 @@
 import motor.motor_asyncio
-from pymongo import ReturnDocument
+from pymongo import ReturnDocument, MongoClient
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -7,7 +7,7 @@ import os
 load_dotenv()
 print("mongodb url: ", os.getenv("MONGODB_URL"))
 print( os.getenv("MONGODB_URL"))
-client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URL")) 
+client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URL"), tls=True, tlsAllowInvalidCertificates=True) 
 
 db = client.journal_sentimentdb
 
