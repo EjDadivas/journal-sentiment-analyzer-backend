@@ -21,9 +21,24 @@ async def load_chat_history(sender_id: str, receiver_id: str):
     return messages
 from fastapi import WebSocketDisconnect
 
-@router.websocket("/{user_id}/ws")
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+
+    async def connect(self, user_id: str, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections[user_id] = websocket
+
+    async def disconnect(self, user_id: str):
+        del self.active_connections[user_id]
+
+    async def send_personal_message(self, message: str, user_id: str):
+        await self.active_connections[user_id].send_text(message)
+
+manager = ConnectionManager()
+@router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str):
-    await websocket.accept()
+    await manager.connect(user_id, websocket)
     try:
         while True:
             data = await websocket.receive_text()
@@ -31,6 +46,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
             message_data['created_at'] = datetime.fromisoformat(message_data['created_at'].replace("Z", "+00:00"))
             message = MessageHistoryModel(**message_data)
             await message_collection.insert_one(message.dict(by_alias=True))
-            await websocket.send_text(message.message)
+            # await manager.broadcast(message.message)
+            await manager.send_personal_message(message.message, user_id)
+            await manager.send_personal_message(message.message, message.receiver_id)
     except WebSocketDisconnect:
+        manager.disconnect(user_id)
         print(f"WebSocket connection with user {user_id} closed")

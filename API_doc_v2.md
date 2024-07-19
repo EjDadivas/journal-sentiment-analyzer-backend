@@ -794,7 +794,7 @@
 
 ### Sending a Message via WebSocket
 
-**WebSocket Endpoint:** `/message/{user_id}/ws`
+**WebSocket Endpoint:** `/message/ws/{user_id}`
 
 Allows sending a message to another user via WebSocket. The `user_id` in the WebSocket endpoint URL is the ID of the sender.
 
