@@ -73,27 +73,27 @@ async def list_journal_entries():
         del journal_entry["student_id"]
     return journal_entries
 
-# @router.get(
-#     "/{id}",
-#     response_description="Get a single journal entry",
-#     # response_model=JournalModel,
-#     response_model_by_alias=False,
-# )
-# async def show_journal_entry(id: str):
-#     if (
-#         journal_entry := await journal_collection.find_one({"_id": ObjectId(id)})
-#     ) is not None:
-#         journal_entry["_id"] = str(journal_entry["_id"])
-#         student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
-#         if student:
-#             student["_id"] = str(student["_id"])
-#             del student["password"]  # remove the password before adding the student details
-#             journal_entry["student_details"] = student
-#         del journal_entry["student_id"]
+@router.get(
+    "/{id}",
+    response_description="Get a single journal entry",
+    # response_model=JournalModel,
+    response_model_by_alias=False,
+)
+async def show_journal_entry(id: str):
+    if (
+        journal_entry := await journal_collection.find_one({"_id": ObjectId(id)})
+    ) is not None:
+        journal_entry["_id"] = str(journal_entry["_id"])
+        student = await student_collection.find_one({"_id": ObjectId(journal_entry["student_id"])})
+        if student:
+            student["_id"] = str(student["_id"])
+            del student["password"]  # remove the password before adding the student details
+            journal_entry["student_details"] = student
+        del journal_entry["student_id"]
         
-#         return journal_entry
+        return journal_entry
 
-#     raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
+    raise HTTPException(status_code=404, detail=f"Journal entry {id} not found")
 
 
 

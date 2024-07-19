@@ -3,9 +3,10 @@
 ### Getting Categorized Users
 
 **Endpoint:** `/journal/emotions`  
-**Method:** `GET`  
+**Method:** `GET`
 
 **Response:**
+
 ```json
 {
   "approval": [
@@ -763,21 +764,18 @@
     }
   ]
 }
-
-
 ```
-
 
 ## Messages
 
 ### Loading Chat History
 
 **Endpoint:** `/message?sender_id=${senderId}&receiver_id=${receiverId}`  
-**Method:** `GET`  
+**Method:** `GET`
 
 **Response:**
-```json
 
+```json
 [
   {
     "_id": "60af8842ab35f2d9c786c610",
@@ -796,11 +794,12 @@
 
 ### Sending a Message via WebSocket
 
-**WebSocket Endpoint:** `/message/ws/{user_id}`
+**WebSocket Endpoint:** `/message/{user_id}/ws`
 
 Allows sending a message to another user via WebSocket. The `user_id` in the WebSocket endpoint URL is the ID of the sender.
 
 **Message Format to Send:**
+
 ```json
 {
   "sender_id": "507f191e810c19729de860ea",
@@ -811,6 +810,7 @@ Allows sending a message to another user via WebSocket. The `user_id` in the Web
 ```
 
 **WebSocket Response:**
+
 ```text
 Hey, are you attending the meeting tomorrow?
 ```

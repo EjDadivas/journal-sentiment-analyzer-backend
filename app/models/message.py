@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import datetime
 
 class MessageHistoryModel(BaseModel):
-    id: Optional[str] = Field(alias='_id')
     sender_id: str
     receiver_id: str
     message: str
