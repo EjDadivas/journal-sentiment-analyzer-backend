@@ -32,8 +32,19 @@ class ConnectionManager:
     async def disconnect(self, user_id: str):
         del self.active_connections[user_id]
 
-    async def send_personal_message(self, message: str, user_id: str):
-        await self.active_connections[user_id].send_text(message)
+
+    async def send_personal_message(self, message: dict, user_id: str):
+        message_str = json.dumps(message)
+        print("message_str", message_str)
+        print("user_id", user_id)
+        if user_id in self.active_connections:
+            try:
+                await self.active_connections[user_id].send_text(message_str)
+            except Exception as e:
+                print(f"Failed to send message to user {user_id}: {e}")
+        else:
+            print(f"User {user_id} is not connected. Message saved but not sent.")
+
 
 manager = ConnectionManager()
 @router.websocket("/ws/{user_id}")
@@ -46,9 +57,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
             message_data['created_at'] = datetime.fromisoformat(message_data['created_at'].replace("Z", "+00:00"))
             message = MessageHistoryModel(**message_data)
             await message_collection.insert_one(message.dict(by_alias=True))
-            # await manager.broadcast(message.message)
-            await manager.send_personal_message(message.message, user_id)
-            await manager.send_personal_message(message.message, message.receiver_id)
+            message_data['created_at'] = message.created_at.isoformat()
+            await manager.send_personal_message(message_data, user_id)
+            await manager.send_personal_message(message_data, message.receiver_id)
     except WebSocketDisconnect:
         manager.disconnect(user_id)
         print(f"WebSocket connection with user {user_id} closed")

@@ -811,6 +811,12 @@ Allows sending a message to another user via WebSocket. The `user_id` in the Web
 
 **WebSocket Response:**
 
-```text
-Hey, are you attending the meeting tomorrow?
+```json
+{
+  "sender_id": "662f20952febb1a717b2374d",
+  "receiver_id": "661a760aeb725fb0b95bde47",
+  "message": "why",
+  "sender_type": "admin",
+  "created_at": "2024-07-23T14:12:02.669000+00:00"
+}
 ```

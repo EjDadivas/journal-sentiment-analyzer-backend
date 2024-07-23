@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebSocket Chat</title>
+    <script>
+      var socket = new WebSocket(
+        "ws://127.0.0.1:8000/message/ws/661a760aeb725fb0b95bde47"
+      );
+
+      socket.onopen = function (event) {
+        console.log("WebSocket connection established.");
+      };
+
+      socket.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        console.log("data", data);
+        var message = data.message;
+        console.log("Received message: " + message);
+
+        // Append the received message to the message history
+        var messageHistory = document.getElementById("messageHistory");
+        var messageElement = document.createElement("p");
+        messageElement.textContent = message;
+        messageHistory.appendChild(messageElement);
+      };
+
+      socket.onerror = function (error) {
+        console.error("WebSocket error: " + error.message);
+      };
+
+      function sendMessage() {
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value;
+        socket.send(
+          JSON.stringify({
+            sender_id: "661a760aeb725fb0b95bde47",
+            receiver_id: "662f20952febb1a717b2374d",
+            message: message,
+            sender_type: "admin",
+            created_at: new Date().toISOString(),
+          })
+        );
+        messageInput.value = "";
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Admin</h1>
+    <input type="text" id="messageInput" placeholder="Enter message" />
+    <button onclick="sendMessage()">Send</button>
+    <div id="messageHistory"></div>
+  </body>
+</html>
