@@ -3,18 +3,41 @@
   <head>
     <title>WebSocket Chat</title>
     <script>
-      var socket = new WebSocket(
-        "ws://127.0.0.1:8000/message/ws/662f20952febb1a717b2374d"
-      );
+      var senderId = "662f20952febb1a717b2374d";
+      var receiverId = "661a760aeb725fb0b95bde47";
+      var socket = new WebSocket("ws://127.0.0.1:8000/message/ws/" + senderId);
 
       socket.onopen = function (event) {
         console.log("WebSocket connection established.");
+
+        // Fetch chat history
+        fetch(
+          "http://127.0.0.1:8000/message?sender_id=" +
+            senderId +
+            "&receiver_id=" +
+            receiverId
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            var messageHistory = document.getElementById("messageHistory");
+            data.forEach((message) => {
+              var messageElement = document.createElement("p");
+
+              if (message.sender_id === senderId) {
+                messageElement.textContent = "Admin:" + message.message;
+              } else {
+                messageElement.textContent = "Student:" + message.message;
+              }
+
+              messageHistory.appendChild(messageElement);
+            });
+          });
       };
 
       socket.onmessage = function (event) {
         var data = JSON.parse(event.data);
         console.log("data", data);
-        var message = data.message;
+        var message = "Student:" + data.message;
         console.log("Received message: " + message);
 
         // Append the received message to the message history
