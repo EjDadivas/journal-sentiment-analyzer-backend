@@ -25,6 +25,15 @@ async def login_admin(email: str = Body(...), password: str = Body(...)):
     del admin["password"] 
     return admin
 
+@router.get("/", response_description="List all admins")
+async def list_admins():
+    admins = await admin_collection.find().to_list(1000)
+    for admin in admins:
+        admin["_id"] = str(admin["_id"])
+        del admin["password"]
+        
+    return admins
+
 @router.get("/{id}", response_description="Get a single admin")
 async def get_admin(id: str):
     if (admin := await admin_collection.find_one({"_id": ObjectId(id)})) is not None:
