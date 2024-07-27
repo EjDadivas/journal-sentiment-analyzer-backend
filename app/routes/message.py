@@ -8,6 +8,14 @@ from datetime import datetime
 
 router = APIRouter()
 
+@router.get("/{sender_id}", response_description="Get all messages sent by a user")
+async def get_messages_sent_by(sender_id: str):
+    messages = await message_collection.find({"sender_id": sender_id}).to_list(1000)
+    for message in messages:
+        message["_id"] = str(message["_id"])
+        message["created_at"] = message["created_at"].isoformat() if isinstance(message["created_at"], datetime) else message["created_at"]
+    return messages
+
 @router.get("/", response_description="Load chat history")
 async def load_chat_history(sender_id: str, receiver_id: str):
     messages = await message_collection.find({
