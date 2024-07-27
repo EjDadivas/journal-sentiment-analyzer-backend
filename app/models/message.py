@@ -3,6 +3,8 @@ from typing import Optional
 from datetime import datetime
 
 class MessageHistoryModel(BaseModel):
+    sender_name: str
+    receiver_name: str
     sender_id: str
     receiver_id: str
     message: str
@@ -16,6 +18,8 @@ class MessageHistoryModel(BaseModel):
         }
         schema_extra = {
             "example": {
+                "sender_name": "Admin123",
+                "receiver_name": "Student123",
                 "sender_id": "507f1f77bcf86cd799439011",
                 "receiver_id": "507f1f77bcf86cd799439012",
                 "message": "Hello, this is a test message.",
