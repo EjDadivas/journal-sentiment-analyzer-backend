@@ -33,7 +33,8 @@ def determine_sentiment_category(sentiment_scores):
     elif negative_score > positive_score:
         return "negative"
     else:
-        return "neutral"
+        # Assign to negative if scores are equal but scores exist
+        return "negative" if positive_score == 0 and negative_score > 0 else "positive"
 
 @router.post(
     "/",
