@@ -10,6 +10,7 @@ class AdminModel(BaseModel):
     lastName: str
     email: EmailStr
     password: str
+    journal_pin: Optional[str] = None 
 
     @validator("password")
     def hash_password(cls, password: str) -> str:
@@ -24,5 +25,6 @@ class AdminModel(BaseModel):
                 "lastName": "User",
                 "email": "admin@school.com",
                 "password": "admin123",
+                "journal_pin": "123456",  
             }
         }

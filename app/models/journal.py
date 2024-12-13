@@ -16,6 +16,7 @@ class JournalModel(BaseModel):
     entry: str = Field(...)
     student_id: Optional[str] = Field(default=None)
     sentiment_scores: Optional[List[SentimentScore]] = []
+    allow_admin_read: bool = Field(default=False) 
 
 
     class Config:

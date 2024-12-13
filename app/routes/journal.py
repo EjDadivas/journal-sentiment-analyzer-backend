@@ -53,6 +53,7 @@ async def create_journal_entry(journal_entry: JournalModel = Body(...)):
             "student_id": ObjectId(journal_entry.student_id),
             "sentiment_score": sentiment_score,
             "sentiment_category": sentiment_category,
+            "allow_admin_read": journal_entry.allow_admin_read,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         })
@@ -180,6 +181,7 @@ async def update_journal(id: str, journal_entry: JournalModel = Body(...)):
             "title": journal_entry.title,
             "sentiment_score": sentiment_score,
             "sentiment_category": sentiment_category,
+            "allow_admin_read": journal_entry.allow_admin_read,
             "updated_at": datetime.utcnow(),
             }
          },
@@ -189,7 +191,6 @@ async def update_journal(id: str, journal_entry: JournalModel = Body(...)):
         update_result["_id"] = str(update_result["_id"])
         update_result["student_id"] = str(update_result["student_id"])
         
-        # Update sentiment category
         update_result["sentiment_category"] = sentiment_category 
         return update_result
 
